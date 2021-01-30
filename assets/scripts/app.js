@@ -1,3 +1,10 @@
+class Product {
+  title = "DEFAULT";
+  imageUrl;
+  price;
+  description;
+}
+
 const productList = {
   // create a products array to store the products
   products: [
