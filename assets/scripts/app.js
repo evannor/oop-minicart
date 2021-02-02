@@ -13,6 +13,22 @@ class Product {
   }
 }
 
+class ShoppingCart {
+  items = [];
+
+  render() {
+    // simply render which shows the total amount and an order now button
+    const cartEl = document.createElement("section");
+    cartEl.innerHTML = `
+      <h2>Total: \$${0}</h2>
+      <button>Order Now!</button>
+    `;
+    cartEl.className = "cart";
+    // will later add event listener to button above
+    return cartEl;
+  }
+}
+
 class ProductItem {
   constructor(product) {
     // adds a new 'product' property to the eventually created objects
@@ -69,7 +85,6 @@ class ProductList {
   // Could add a constructor function here, but when a product is created this current form will have their values already initialized
 
   render() {
-    const appRenderHook = document.getElementById("app");
     const prodList = document.createElement("ul");
     // class style was predefined in style/app.css
     prodList.classList = "product-list";
@@ -79,9 +94,23 @@ class ProductList {
       const prodEl = productItem.render();
       prodList.append(prodEl);
     }
-    appRenderHook.append(prodList);
+    return prodList;
   }
 }
 
-const productList = new ProductList();
-productList.render();
+class Shop {
+  render() {
+    const appRenderHook = document.getElementById("app");
+
+    const cart = new ShoppingCart();
+    const cartEl = cart.render();
+    const productList = new ProductList();
+    const prodListEl = productList.render();
+
+    appRenderHook.append(cartEl);
+    appRenderHook.append(prodListEl);
+  }
+}
+
+const shop = new Shop();
+shop.render();
