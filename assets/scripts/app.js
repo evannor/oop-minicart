@@ -16,10 +16,29 @@ class Product {
 class ShoppingCart {
   items = [];
 
-  addProduct(product) {
-    this.items.push(product);
+  // this setter is optional, just shown to provide an example
+  set cartItems(value) {
+    this.items = value;
     // will later dynamically render a new total here
-    this.totalOutput.innerHTML = `<h2>Total: \$${1}</h2>`;
+    this.totalOutput.innerHTML = `<h2>Total: \$${this.totalAmount.toFixed(
+      2
+    )}</h2>`;
+  }
+
+  get totalAmount() {
+    const sum = this.items.reduce(
+      (prevVal, curItem) => prevVal + curItem.price,
+      0
+    );
+    return sum;
+  }
+
+  addProduct(product) {
+    // makes a true copy of the items array
+    const updatedItems = [...this.items];
+    updatedItems.push(product);
+    // trigger the setter, pass updatedItems as a value to it
+    this.cartItems = updatedItems;
   }
 
   render() {
