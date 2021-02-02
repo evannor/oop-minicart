@@ -16,6 +16,12 @@ class Product {
 class ShoppingCart {
   items = [];
 
+  addProduct(product) {
+    this.items.push(product);
+    // will later dynamically render a new total here
+    this.totalOutput.innerHTML = `<h2>Total: \$${1}</h2>`;
+  }
+
   render() {
     // simply render which shows the total amount and an order now button
     const cartEl = document.createElement("section");
@@ -24,6 +30,8 @@ class ShoppingCart {
       <button>Order Now!</button>
     `;
     cartEl.className = "cart";
+    // dyanmically add totalOutput field
+    this.totalOutput = cartEl.querySelector("h2");
     // will later add event listener to button above
     return cartEl;
   }
@@ -36,8 +44,8 @@ class ProductItem {
   }
 
   addToCart() {
-    console.log("Adding product to cart...");
-    console.log(this.product);
+    App.addProductToCart(this.product);
+    // product is passed when a ProductItem is created, as seen in constructor method
   }
 
   render() {
@@ -102,8 +110,9 @@ class Shop {
   render() {
     const appRenderHook = document.getElementById("app");
 
-    const cart = new ShoppingCart();
-    const cartEl = cart.render();
+    // changing to this.cart signifies that it's a property of Shop
+    this.cart = new ShoppingCart();
+    const cartEl = this.cart.render();
     const productList = new ProductList();
     const prodListEl = productList.render();
 
@@ -112,5 +121,23 @@ class Shop {
   }
 }
 
-const shop = new Shop();
-shop.render();
+class App {
+  // below is not required but adds readability
+  static cart;
+
+  static init() {
+    const shop = new Shop();
+    // refers to instance based on shoppingcart class
+    shop.render();
+    this.cart = shop.cart;
+  }
+
+  // use this to create
+  static addProductToCart(product) {
+    // forward the product using this static method as proxy
+    this.cart.addProduct(product);
+  }
+}
+
+// will execute init method directly on the class itself
+App.init();
