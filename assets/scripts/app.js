@@ -19,6 +19,11 @@ class ProductItem {
     this.product = product;
   }
 
+  addToCart() {
+    console.log("Adding product to cart...");
+    console.log(this.product);
+  }
+
   render() {
     // create new element to render to the DOM
     const prodEl = document.createElement("li");
@@ -36,6 +41,12 @@ class ProductItem {
         </div>
       </div>
     `;
+    // b/c executed inside render method of class, this always applies to each concrete instance which is later created on that class
+    // having multiple products with buttons does not cause a problem
+    const addCartButton = prodEl.querySelector("button");
+    addCartButton.addEventListener("click", this.addToCart.bind(this));
+    // changes what this binds to inside of addToCart
+    // w/out .bind(this) the call to this inside addToCart would point to the button and not the Product object
     return prodEl;
   }
 }
