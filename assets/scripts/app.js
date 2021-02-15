@@ -89,6 +89,13 @@ class ShoppingCart extends Component {
     this.cartItems = updatedItems;
   }
 
+  // method called after Order Now button clicked
+  orderProducts() {
+    console.log("Ordering...");
+    console.log(this.items);
+  }
+  // can also make this a field and call an arrow function, to be used without arrow function in addEventListener below
+
   render() {
     // extends methods of base class Component
     // simply render which shows the total amount and an order now button
@@ -97,6 +104,10 @@ class ShoppingCart extends Component {
       <h2>Total: \$${0}</h2>
       <button>Order Now!</button>
     `;
+    const orderBtn = cartEl.querySelector("button");
+    // arrow function prevent this from referencing the button
+    // allows it to reference the code above as it is this code which calls the button
+    orderBtn.addEventListener("click", () => this.orderProducts());
     // dyanmically add totalOutput field
     this.totalOutput = cartEl.querySelector("h2");
     // doesn't return anythin b/c not interested in cart element anymore
