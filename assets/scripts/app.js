@@ -95,8 +95,9 @@ class ShoppingCart extends Component {
   }
 }
 
-class ProductItem {
-  constructor(product) {
+class ProductItem extends Component {
+  constructor(product, renderHookId) {
+    super(renderHookId);
     // adds a new 'product' property to the eventually created objects
     this.product = product;
   }
@@ -107,9 +108,8 @@ class ProductItem {
   }
 
   render() {
-    // create new element to render to the DOM
-    const prodEl = document.createElement("li");
-    prodEl.className = "product-item";
+    // use Component method to create element
+    const prodEl = this.createRootElement("li", "product-item");
     const image = this.product.imageUrl;
     // create the structure and code for html we want to add to each li
     prodEl.innerHTML = `
@@ -127,13 +127,10 @@ class ProductItem {
     // having multiple products with buttons does not cause a problem
     const addCartButton = prodEl.querySelector("button");
     addCartButton.addEventListener("click", this.addToCart.bind(this));
-    // changes what this binds to inside of addToCart
-    // w/out .bind(this) the call to this inside addToCart would point to the button and not the Product object
-    return prodEl;
   }
 }
 
-class ProductList {
+class ProductList extends Component {
   products = [
     new Product(
       "Hiking Boots",
@@ -148,33 +145,31 @@ class ProductList {
       159.99
     ),
   ];
-  // Could add a constructor function here, but when a product is created this current form will have their values already initialized
+
+  // should be app passed as renderHookId, but using variable to be more flexible
+  constructor(renderHookId) {
+    super(renderHookId);
+  }
 
   render() {
-    const prodList = document.createElement("ul");
-    // class style was predefined in style/app.css
-    prodList.classList = "product-list";
+    this.createRootElement("ul", "product-list", [
+      new ElementAttribute("id", "prod-list"),
+    ]);
     // loop through each prod in products array in this object
     for (const prod of this.products) {
-      const productItem = new ProductItem(prod);
-      const prodEl = productItem.render();
-      prodList.append(prodEl);
+      // want to pass id of element where this item should be added
+      const productItem = new ProductItem(prod, "prod-list");
+      productItem.render();
     }
-    return prodList;
   }
 }
 
 class Shop {
   render() {
-    const appRenderHook = document.getElementById("app");
-
-    // changing to this.cart signifies that it's a property of Shop
     this.cart = new ShoppingCart("app");
     this.cart.render();
-    const productList = new ProductList();
-    const prodListEl = productList.render();
-
-    appRenderHook.append(prodListEl);
+    const productList = new ProductList("app");
+    productList.render();
   }
 }
 
