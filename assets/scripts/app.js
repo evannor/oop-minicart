@@ -26,7 +26,13 @@ class ElementAttribute {
 class Component {
   constructor(renderHook) {
     this.hookId = renderHook;
+    this.render();
   }
+
+  // create in parent class for clarity on reading code
+  // this method will be overridden by every subclass render call
+  // also works because this will reference what called render, which will be the subclass and not this component class
+  render() {}
 
   createRootElement(tag, cssClasses, attributes) {
     const rootEl = document.createElement(tag);
@@ -158,18 +164,19 @@ class ProductList extends Component {
     // loop through each prod in products array in this object
     for (const prod of this.products) {
       // want to pass id of element where this item should be added
-      const productItem = new ProductItem(prod, "prod-list");
-      productItem.render();
+      new ProductItem(prod, "prod-list");
     }
   }
 }
 
-class Shop {
+class Shop extends Component {
+  constructor() {
+    super();
+  }
+
   render() {
     this.cart = new ShoppingCart("app");
-    this.cart.render();
-    const productList = new ProductList("app");
-    productList.render();
+    new ProductList("app");
   }
 }
 
@@ -179,8 +186,6 @@ class App {
 
   static init() {
     const shop = new Shop();
-    // refers to instance based on shoppingcart class
-    shop.render();
     this.cart = shop.cart;
   }
 
