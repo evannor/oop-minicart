@@ -13,7 +13,41 @@ class Product {
   }
 }
 
-class ShoppingCart {
+// guarantees the structure requested in createRootElement method in Component
+class ElementAttribute {
+  // store data we got on the constructor in properties of the class
+  constructor(attrName, attrValue) {
+    this.name = attrName;
+    this.value = attrValue;
+  }
+}
+
+// class used to output different similar pieces of the webpage
+class Component {
+  constructor(renderHook) {
+    this.hookId = renderHook;
+  }
+
+  createRootElement(tag, cssClasses, attributes) {
+    const rootEl = document.createElement(tag);
+    // check to see if any classes were passed, and then assign
+    if (cssClasses) {
+      rootEl.className = cssClasses;
+    }
+    // check to see if attributes were passed and confirm receipt of array
+    if (attributes && attributes.length > 0) {
+      for (const attr of attributes) {
+        rootEl.setAttribute(attr.name, attr.value);
+      }
+    }
+    document.getElementById(this.hookId).append(rootEl);
+    return rootEl;
+  }
+}
+
+// inherits from one class
+// cannot inherit from multiple classes in JS
+class ShoppingCart extends Component {
   items = [];
 
   // this setter is optional, just shown to provide an example
@@ -33,6 +67,12 @@ class ShoppingCart {
     return sum;
   }
 
+  constructor(renderHookId) {
+    // use this in the constructor if you need to utilize the constructor in the base class / the one being extended
+    super(renderHookId);
+    // always call super first, then use this inside the constructor
+  }
+
   addProduct(product) {
     // makes a true copy of the items array
     const updatedItems = [...this.items];
@@ -42,17 +82,16 @@ class ShoppingCart {
   }
 
   render() {
+    // extends methods of base class Component
     // simply render which shows the total amount and an order now button
-    const cartEl = document.createElement("section");
+    const cartEl = this.createRootElement("section", "cart");
     cartEl.innerHTML = `
       <h2>Total: \$${0}</h2>
       <button>Order Now!</button>
     `;
-    cartEl.className = "cart";
     // dyanmically add totalOutput field
     this.totalOutput = cartEl.querySelector("h2");
-    // will later add event listener to button above
-    return cartEl;
+    // doesn't return anythin b/c not interested in cart element anymore
   }
 }
 
@@ -130,12 +169,11 @@ class Shop {
     const appRenderHook = document.getElementById("app");
 
     // changing to this.cart signifies that it's a property of Shop
-    this.cart = new ShoppingCart();
-    const cartEl = this.cart.render();
+    this.cart = new ShoppingCart("app");
+    this.cart.render();
     const productList = new ProductList();
     const prodListEl = productList.render();
 
-    appRenderHook.append(cartEl);
     appRenderHook.append(prodListEl);
   }
 }
